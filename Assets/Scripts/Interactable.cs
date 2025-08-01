@@ -8,6 +8,7 @@ using UnityEngine.UI;
 public class Interactable : MonoBehaviour
 {
     public UnityEvent onInteract;
+    public string useMessage = "Use";
 
     public void Interact()
     {

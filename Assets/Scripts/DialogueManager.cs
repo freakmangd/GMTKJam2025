@@ -110,7 +110,7 @@ public class DialogueManager : MonoBehaviour
         talking = false;
         textBox.SetActive(false);
         nextDialogueArrow.SetActive(false);
-        onFinish.Invoke();
+        onFinish?.Invoke();
     }
 
     public void ToggleTextBox(bool value)
