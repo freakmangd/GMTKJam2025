@@ -6,7 +6,7 @@ using UnityEngine.Events;
 public class Wife : MonoBehaviour
 {
     private float losTimer;
-    private const float losTimerMax = 0.5f;
+    private const float losTimerMax = 0.2f;
 
     public DialogueList[] dialogues;
 
