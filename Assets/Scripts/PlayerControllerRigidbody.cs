@@ -9,17 +9,14 @@ public class PlayerControllerRigidbody : MonoBehaviour
     [SerializeField]
     private float moveSpeed, crouchSpeed, jumpForce, aerialAccel, gravityScale;
 
-    [SerializeField]
-    private Camera cam;
+    [SerializeField] private Camera cam;
     public Vector3 cameraDir { get { return cam.transform.forward; } }
     public Vector3 cameraPos { get { return cam.transform.position; } }
 
-    [SerializeField]
-    private Transform rotator;
-    [SerializeField]
-    private Rigidbody rb;
+    [SerializeField] private Transform rotator;
+    [SerializeField] private Rigidbody rb;
 
-    private InputAction movement, look, run, jump, crouch, use, mousepos;
+    private InputAction movement, look, run, jump, crouch, use, mousepos, throwHeld;
 
     public static PlayerControllerRigidbody Instance { get { return instance; } }
     private static PlayerControllerRigidbody instance;
@@ -47,7 +44,7 @@ public class PlayerControllerRigidbody : MonoBehaviour
     float ladderAngleRange = 60 / 2;
 
     public Transform pickupHold;
-    public CerealBox heldCereal;
+    [HideInInspector] public CerealBox heldCereal;
 
     private float interactCheckTimer = 0f;
     private const float interactCheckTimerMax = 0.2f;
@@ -59,7 +56,7 @@ public class PlayerControllerRigidbody : MonoBehaviour
         minigame,
     }
 
-    public State state;
+    public State state = State.normal;
 
     private void Awake()
     {
@@ -75,6 +72,7 @@ public class PlayerControllerRigidbody : MonoBehaviour
         crouch = InputSystem.actions.FindAction("Crouch");
         use = InputSystem.actions.FindAction("Interact");
         mousepos = InputSystem.actions.FindAction("MousePos");
+        throwHeld = InputSystem.actions.FindAction("Attack");
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -82,7 +80,7 @@ public class PlayerControllerRigidbody : MonoBehaviour
 
     void Update()
     {
-        Vector2 movement_value = DialogueManager.ins.talking ? Vector3.zero : movement.ReadValue<Vector2>();
+        Vector2 movement_value = DialogueManager.ins.talking || state == State.minigame ? Vector3.zero : movement.ReadValue<Vector2>();
 
         float speed = state == State.crouching ? crouchSpeed : moveSpeed;
         inputDir.Set(movement_value.x * speed, movement_value.y * speed);
@@ -142,7 +140,7 @@ public class PlayerControllerRigidbody : MonoBehaviour
             {
                 print("hit something " + hit.collider);
 
-                if (heldCereal != null && hit.collider.CompareTag("Bowl"))
+                if (heldCereal && hit.collider.CompareTag("Bowl"))
                 {
                     print("is bowl? " + hit.collider.gameObject);
                     state = State.minigame;
@@ -153,6 +151,11 @@ public class PlayerControllerRigidbody : MonoBehaviour
                     interactable.Interact();
                 }
             }
+        }
+
+        if (heldCereal && throwHeld.WasPressedThisDynamicUpdate())
+        {
+            heldCereal.Throw(cam.transform.forward);
         }
 
         switch (state)

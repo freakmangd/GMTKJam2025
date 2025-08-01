@@ -18,4 +18,14 @@ public class CerealBox : MonoBehaviour
 
         bowlHitbox.enabled = true;
     }
+
+    public void Throw(Vector3 dir)
+    {
+        transform.parent = null;
+
+        rb.isKinematic = false;
+        rb.detectCollisions = true;
+        rb.AddForce(dir * 10f, ForceMode.Impulse);
+        rb.AddTorque(Random.insideUnitSphere * 2f, ForceMode.Impulse);
+    }
 }
