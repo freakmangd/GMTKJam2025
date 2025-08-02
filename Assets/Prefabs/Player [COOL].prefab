@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 636328393289553946}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.297, z: 0}
+  m_LocalPosition: {x: 0, y: -1, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -59,11 +59,12 @@ Transform:
   m_GameObject: {fileID: 987822624706637973}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.7140002, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 7078424171675045096}
+  - {fileID: 7277878036415713326}
   m_Father: {fileID: 987822625512246451}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!20 &987822624706637975
@@ -194,14 +195,13 @@ Transform:
   m_GameObject: {fileID: 987822625512246450}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: -0.12, z: 0}
+  m_LocalPosition: {x: 0, y: 0.602, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 2508204380924905670}
   - {fileID: 8342021258883763970}
   - {fileID: 987822624706637968}
-  - {fileID: 7277878036415713326}
   m_Father: {fileID: 987822625639342882}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &987822625639342880
@@ -347,11 +347,13 @@ MonoBehaviour:
   pickupHold: {fileID: 7277878036415713326}
   heldCereal: {fileID: 0}
   eatSystem: {fileID: 8527115548577249439}
+  pouredCereal: 0
+  finishedCereal: 0
+  tookOutTrash: 0
+  hasKeys: 0
   usePanel: {fileID: 0}
   useText: {fileID: 0}
   state: 0
-  pouredCereal: 0
-  finishedCereal: 0
 --- !u!1 &987822626561999959
 GameObject:
   m_ObjectHideFlags: 0
@@ -407,13 +409,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1213976772104904182}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0.53729963, z: 0, w: 0.8433915}
-  m_LocalPosition: {x: 0.56, y: 0.26, z: 0.71}
+  m_LocalRotation: {x: -0, y: 0.81208354, z: -0, w: -0.5835412}
+  m_LocalPosition: {x: 0.5600004, y: -0.6, z: 0.71000004}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
-  m_Father: {fileID: 987822625512246451}
-  m_LocalEulerAnglesHint: {x: 0, y: 65, z: 0}
+  m_Father: {fileID: 987822624706637968}
+  m_LocalEulerAnglesHint: {x: 0, y: 251.4, z: 0}
 --- !u!1 &4902181502623236059
 GameObject:
   m_ObjectHideFlags: 0
@@ -5339,7 +5341,7 @@ Transform:
   m_GameObject: {fileID: 7058636668710762657}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.65, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -2,10 +2,9 @@ using UnityEngine;
 
 public class CerealBox : MonoBehaviour
 {
-    [SerializeField] private BoxCollider bowlHitbox;
     [SerializeField] private Rigidbody rb;
     [SerializeField] private ParticleSystem pourSystem;
-    [SerializeField] private Animator cerealBoxAnimated;
+    [SerializeField] private CerealBoxAnimated cerealBoxAnimated;
 
     void Update()
     {
@@ -20,40 +19,24 @@ public class CerealBox : MonoBehaviour
         }
     }
 
-    public void Pickup()
+    public void OnThrow()
     {
-        PlayerControllerRigidbody.Instance.heldCereal = this;
-
-        rb.isKinematic = true;
-        rb.detectCollisions = false;
-
-        transform.parent = PlayerControllerRigidbody.Instance.pickupHold;
-        transform.localPosition = Vector3.zero;
-        transform.localRotation = Quaternion.identity;
-
-        bowlHitbox.enabled = true;
-    }
-
-    public void Throw(Vector3 dir)
-    {
-        transform.parent = null;
-
-        rb.isKinematic = false;
-        rb.detectCollisions = true;
-        rb.AddForce(dir * 10f, ForceMode.Impulse);
-        rb.AddTorque(Random.insideUnitSphere * 2f, ForceMode.Impulse);
-
         var main = pourSystem.main;
         main.startLifetime = 5f;
         main.startSpeed = 5f;
-
-        if (!PlayerControllerRigidbody.Instance.pouredCereal) bowlHitbox.enabled = false;
     }
 
     public void PourSimple()
     {
         gameObject.SetActive(false);
         cerealBoxAnimated.gameObject.SetActive(true);
-        cerealBoxAnimated.SetTrigger("Pour");
+        cerealBoxAnimated.SetTrigger("EasyPour");
+    }
+
+    public void PourMinigame()
+    {
+        gameObject.SetActive(false);
+        cerealBoxAnimated.gameObject.SetActive(true);
+        cerealBoxAnimated.Loop2StartMinigamePour();
     }
 }

@@ -4,6 +4,7 @@ using TMPro;
 using Unity.Entities.UniversalDelegates;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 public class PlayerControllerRigidbody : MonoBehaviour
 {
@@ -46,7 +47,7 @@ public class PlayerControllerRigidbody : MonoBehaviour
     float ladderAngleRange = 60 / 2;
 
     public Transform pickupHold;
-    [HideInInspector] public CerealBox heldCereal;
+    [HideInInspector] public Carryable heldItem;
     [SerializeField] private ParticleSystem eatSystem;
 
     [HideInInspector]
@@ -54,6 +55,7 @@ public class PlayerControllerRigidbody : MonoBehaviour
 
     private float interactCheckTimer = 0f;
     private const float interactCheckTimerMax = 0.1f;
+    private const float interactReachDistance = 3f;
     [SerializeField] private GameObject usePanel;
     [SerializeField] private TMP_Text useText;
 
@@ -112,21 +114,21 @@ public class PlayerControllerRigidbody : MonoBehaviour
             }
         }
 
-        if (crouch.ReadValue<bool>())
-        {
-            ToggleCrouched(true);
-        }
+        // if (crouch.ReadValue<bool>())
+        // {
+        //     ToggleCrouched(true);
+        // }
 
-        if (state == State.crouching && !crouch.ReadValue<bool>())
-        {
-            float checkSize = standingCollider.size.y * 0.95f;
+        // if (state == State.crouching && !crouch.ReadValue<bool>())
+        // {
+        //     float checkSize = standingCollider.size.y * 0.95f;
 
-            // Make sure the standing collider wont be intersecting with the ground
-            if (!Physics.CheckBox(transform.position + standingCollider.center + (Vector3.up * 0.1f), new Vector3(checkSize, checkSize, checkSize), Quaternion.LookRotation(Vector3.forward), groundLayer))
-            {
-                ToggleCrouched(false);
-            }
-        }
+        //     // Make sure the standing collider wont be intersecting with the ground
+        //     if (!Physics.CheckBox(transform.position + standingCollider.center + (Vector3.up * 0.1f), new Vector3(checkSize, checkSize, checkSize), Quaternion.LookRotation(Vector3.forward), groundLayer))
+        //     {
+        //         ToggleCrouched(false);
+        //     }
+        // }
 
         interactCheckTimer -= Time.deltaTime;
         if (interactCheckTimer <= 0f)
@@ -134,19 +136,18 @@ public class PlayerControllerRigidbody : MonoBehaviour
             bool didThing = false;
             interactCheckTimer = interactCheckTimerMax;
 
-            if (Physics.Raycast(cam.ScreenPointToRay(mousepos.ReadValue<Vector2>(), Camera.MonoOrStereoscopicEye.Mono), out RaycastHit hit, 2f))
+            if (Physics.Raycast(cam.ScreenPointToRay(mousepos.ReadValue<Vector2>(), Camera.MonoOrStereoscopicEye.Mono), out RaycastHit hit, interactReachDistance))
             {
                 if (hit.collider.TryGetComponent(out Interactable interactable))
                 {
                     if (interactable.enabled)
                     {
-                        usePanel.SetActive(true);
-                        useText.text = interactable.useMessage;
+                        ShowTooltip(interactable.useMessage);
                         didThing = true;
                     }
                 }
             }
-            
+
             if (!didThing)
             {
                 usePanel.SetActive(false);
@@ -154,22 +155,15 @@ public class PlayerControllerRigidbody : MonoBehaviour
             }
         }
 
-        if (use.WasPressedThisDynamicUpdate())
+        if (!ignoreInputs && use.WasPressedThisDynamicUpdate())
         {
             print("try to use");
 
-            if (Physics.Raycast(cam.ScreenPointToRay(mousepos.ReadValue<Vector2>(), Camera.MonoOrStereoscopicEye.Mono), out RaycastHit hit, 2f))
+            if (Physics.Raycast(cam.ScreenPointToRay(mousepos.ReadValue<Vector2>(), Camera.MonoOrStereoscopicEye.Mono), out RaycastHit hit, interactReachDistance))
             {
                 print("hit something " + hit.collider);
 
-                if (!pouredCereal && heldCereal && hit.collider.CompareTag("Bowl"))
-                {
-                    print("is bowl? " + hit.collider.gameObject);
-                    StartMinigame();
-                    heldCereal.PourSimple();
-                    pouredCereal = true;
-                }
-                else if (hit.collider.TryGetComponent(out Interactable interactable))
+                if (hit.collider.TryGetComponent(out Interactable interactable))
                 {
                     if (interactable.enabled)
                     {
@@ -180,9 +174,9 @@ public class PlayerControllerRigidbody : MonoBehaviour
             }
         }
 
-        if (heldCereal && throwHeld.WasPressedThisDynamicUpdate())
+        if (!ignoreInputs && heldItem && throwHeld.WasPressedThisDynamicUpdate())
         {
-            heldCereal.Throw(cam.transform.forward);
+            heldItem.Throw(cam.transform.forward);
         }
 
         switch (state)
@@ -325,6 +319,27 @@ public class PlayerControllerRigidbody : MonoBehaviour
     public float GetCameraRot()
     {
         return cam.transform.eulerAngles.y;
+    }
+
+    public Transform TakeCamera(Transform newParent)
+    {
+        cam.transform.parent = newParent;
+        cam.transform.localPosition = Vector3.zero;
+        cam.transform.localRotation = Quaternion.identity;
+        return cam.transform;
+    }
+
+    public void GiveBackCamera()
+    {
+        cam.transform.parent = rotator;
+        cam.transform.localPosition = Vector3.zero;
+        cam.transform.localRotation = Quaternion.identity;
+    }
+
+    public void ShowTooltip(string message)
+    {
+        usePanel.SetActive(true);
+        useText.text = message;
     }
 
     public void PickupKeys()

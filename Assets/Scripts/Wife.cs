@@ -35,7 +35,7 @@ public class Wife : MonoBehaviour
                 if (hit.transform.gameObject.CompareTag("Player"))
                 {
                     state = State.check_on_baby;
-                    DialogueManager.ins.Speak(dialogues[0].dialogue, runToBabyStart);
+                    DialogueManager.ins.Speak(dialogues[WhatLoopIsIt.ins.loop - 1].dialogue, runToBabyStart);
                 }
             }
         }

@@ -23,6 +23,8 @@ public class DialogueManager : MonoBehaviour
 
     private InputAction next;
 
+    [SerializeField] private GameObject black;
+
     public static DialogueManager ins;
 
     private void Awake()
@@ -121,5 +123,10 @@ public class DialogueManager : MonoBehaviour
     public void ClearTextBox()
     {
         dialogueText.text = string.Empty;
+    }
+
+    public void CutToBlack()
+    {
+        black.SetActive(true);
     }
 }
