@@ -4,9 +4,15 @@ public class TrashBag : MonoBehaviour
 {
     [SerializeField] private GameObject trashBag;
 
-    public void Empty()
+    void OnCollisionEnter(Collision collision)
     {
-        trashBag.SetActive(false);
-        PlayerControllerRigidbody.Instance.tookOutTrash = true;
+        print("ok? " + collision.gameObject);
+
+        if (collision.collider.CompareTag("TrashCan"))
+        {
+            trashBag.SetActive(false);
+            PlayerControllerRigidbody.Instance.tookOutTrash = true;
+            collision.collider.GetComponent<TrashCan>().ShowTrashBag();
+        }
     }
 }

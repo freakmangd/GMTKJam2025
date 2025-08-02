@@ -27,12 +27,8 @@ public class Car : MonoBehaviour
             return;
         }
 
-        Transform cam = player.cam.transform;
-        cam.parent = cameraHold;
-        cam.localPosition = Vector3.zero;
-        cam.localRotation = Quaternion.identity;
-
-        player.state = PlayerControllerRigidbody.State.minigame;
+        player.TakeCamera(cameraHold);
+        player.StartMinigame();
 
         animator.SetTrigger("JustDie");
     }
