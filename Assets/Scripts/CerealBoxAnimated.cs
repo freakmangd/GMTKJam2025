@@ -27,7 +27,7 @@ public class CerealBoxAnimated : MonoBehaviour
 
         if (loop == 2)
         {
-            float sinishT = (Mathf.Sin(loop2BackForthT) + 1f) / 2f;
+            float sinishT = (Mathf.Sin(loop2BackForthT * 2f) + 1f) / 2f;
 
             if (bobbing)
             {
@@ -126,6 +126,10 @@ public class CerealBoxAnimated : MonoBehaviour
         player.GiveBackCamera();
         cerealBoxNormal.transform.position = bowl.minigameCamHold.position;
         cerealBoxNormal.GetComponent<Carryable>().Throw(player.cam.transform.forward + (Vector3.up / 2));
+
+        DialogueManager.ins.Speak(new string[] {
+            "DARN IT ALL! Why won't these loops go in the BOWL!"
+        });
     }
 
     public void SetTrigger(string name)

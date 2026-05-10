@@ -4,6 +4,7 @@ using TMPro;
 using Unity.Entities.UniversalDelegates;
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 public class PlayerControllerRigidbody : MonoBehaviour
@@ -19,7 +20,7 @@ public class PlayerControllerRigidbody : MonoBehaviour
     [SerializeField] private Rigidbody rb;
     [SerializeField] private GameObject model;
 
-    private InputAction movement, look, run, jump, crouch, use, mousepos, throwHeld;
+    private InputAction movement, look, run, jump, crouch, use, mousepos, throwHeld, pause;
 
     public static PlayerControllerRigidbody Instance { get { return instance; } }
     private static PlayerControllerRigidbody instance;
@@ -50,14 +51,29 @@ public class PlayerControllerRigidbody : MonoBehaviour
     [HideInInspector] public Carryable heldItem;
     [SerializeField] private ParticleSystem eatSystem;
 
+    // Car start requirements
     [HideInInspector]
-    public bool pouredCereal = false, finishedCereal = false, tookOutTrash = false, hasKeys = false;
+    public bool
+        pouredCereal = false,
+        finishedCereal = false,
+        tookOutTrash = false,
+        hasKeys = false,
+        hasJumperCables = false,
+        hasTransmission = false;
 
     private float interactCheckTimer = 0f;
     private const float interactCheckTimerMax = 0.1f;
     private const float interactReachDistance = 3f;
     [SerializeField] private GameObject usePanel;
     [SerializeField] private TMP_Text useText;
+
+    [SerializeField] private GameObject throwPanel;
+
+    [SerializeField] private GameObject waterTint;
+
+    [SerializeField] private AudioSource crunch;
+
+    [SerializeField] private GameObject pauseScreen;
 
     public enum State
     {
@@ -83,6 +99,7 @@ public class PlayerControllerRigidbody : MonoBehaviour
         use = InputSystem.actions.FindAction("Interact");
         mousepos = InputSystem.actions.FindAction("MousePos");
         throwHeld = InputSystem.actions.FindAction("Attack");
+        pause = InputSystem.actions.FindAction("Pause");
 
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
@@ -90,9 +107,9 @@ public class PlayerControllerRigidbody : MonoBehaviour
 
     void Update()
     {
-        bool ignoreInputs = DialogueManager.ins.talking || state == State.minigame;
+        bool ignoreInputs = DialogueManager.ins.talking || state == State.minigame || pauseScreen.activeSelf;
         Vector2 movementValue = ignoreInputs ? Vector3.zero : movement.ReadValue<Vector2>();
-        Vector2 lookValue = ignoreInputs ? Vector3.zero : look.ReadValue<Vector2>();
+        Vector2 lookValue = state == State.minigame || pauseScreen.activeSelf ? Vector3.zero : look.ReadValue<Vector2>();
 
         float speed = state == State.crouching ? crouchSpeed : moveSpeed;
         inputDir.Set(movementValue.x * speed, movementValue.y * speed);
@@ -105,6 +122,13 @@ public class PlayerControllerRigidbody : MonoBehaviour
         cam.transform.localRotation = Quaternion.Euler(verticalCamRotation, cam.transform.localRotation.y, 0);
 
         grounded = Physics.CheckBox(groundedPoint.position, groundedBoxSize, Quaternion.identity, groundLayer);
+
+        if (pause.WasPressedThisDynamicUpdate())
+        {
+            Cursor.visible = !pauseScreen.activeSelf;
+            Cursor.lockState = pauseScreen.activeSelf ? CursorLockMode.Locked : CursorLockMode.None;
+            pauseScreen.SetActive(!pauseScreen.activeSelf);
+        }
 
         if (grounded)
         {
@@ -129,6 +153,16 @@ public class PlayerControllerRigidbody : MonoBehaviour
         //         ToggleCrouched(false);
         //     }
         // }
+
+        if (waterTint && waterTint.activeSelf && heldItem && heldItem.CompareTag("Straw"))
+        {
+            ShowTooltip("Suck!");
+
+            if (use.WasPressedThisDynamicUpdate())
+            {
+                BedroomWater.ins.SuckItUp();
+            }
+        }
 
         interactCheckTimer -= Time.deltaTime;
         if (interactCheckTimer <= 0f)
@@ -155,6 +189,8 @@ public class PlayerControllerRigidbody : MonoBehaviour
             }
         }
 
+        if (ignoreInputs) usePanel.SetActive(false);
+
         if (!ignoreInputs && use.WasPressedThisDynamicUpdate())
         {
             print("try to use");
@@ -173,6 +209,8 @@ public class PlayerControllerRigidbody : MonoBehaviour
                 }
             }
         }
+
+        throwPanel.SetActive(heldItem != null && state == State.normal && !ignoreInputs);
 
         if (!ignoreInputs && heldItem && throwHeld.WasPressedThisDynamicUpdate())
         {
@@ -266,20 +304,22 @@ public class PlayerControllerRigidbody : MonoBehaviour
         return speed;
     }
 
-    private void OnTriggerEnter(Collider other)
+    void OnTriggerStay(Collider other)
     {
-        // if (other.CompareTag("Ladder"))
-        // {
-        //     currentLadder = other.transform;
-        // }
+        if (other.CompareTag("Water"))
+        {
+            gravityScale = BedroomWater.ins.transform.position.y + BedroomWater.ins.height > transform.position.y + 2f ? 0.3f : 1f;
+            waterTint.SetActive(BedroomWater.ins.transform.position.y + BedroomWater.ins.height > transform.position.y + 2f);
+        }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        // if (other.CompareTag("Ladder"))
-        // {
-        //     currentLadder = null;
-        // }
+        if (other.CompareTag("Water"))
+        {
+            gravityScale = 1f;
+            waterTint.SetActive(false);
+        }
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -347,6 +387,16 @@ public class PlayerControllerRigidbody : MonoBehaviour
         hasKeys = true;
     }
 
+    public void PickupJumperCables()
+    {
+        hasJumperCables = true;
+    }
+
+    public void PickupTransmission()
+    {
+        hasTransmission = true;
+    }
+
     public void StartMinigame()
     {
         state = State.minigame;
@@ -362,6 +412,13 @@ public class PlayerControllerRigidbody : MonoBehaviour
     public void EatCereal()
     {
         eatSystem.Play();
+        crunch.Stop();
+        crunch.Play();
+    }
+
+    public void ToMainMenu()
+    {
+        SceneManager.LoadScene("MainMenu");
     }
 
     float Clamp(float v, float n, float m)

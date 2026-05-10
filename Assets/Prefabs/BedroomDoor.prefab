@@ -101,6 +101,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minOpen: 0
   maxOpen: -120
+  loop3OpenMinigame: {fileID: 0}
+  loop3OpenSlider: {fileID: 0}
+  doorPhysx: {fileID: 5833146102717597946, guid: 9b208e2f77b8fb9149f91355df29d336, type: 3}
 --- !u!65 &6888711537513145498
 BoxCollider:
   m_ObjectHideFlags: 0

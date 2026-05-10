@@ -131,18 +131,7 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: -1018664272722485354, guid: 7f2f26cc89ecae32dbcead811c3589a4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 8948281062803439022}
-    - targetCorrespondingSourceObject: {fileID: -1018664272722485354, guid: 7f2f26cc89ecae32dbcead811c3589a4, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 3401326544346648448}
-    - targetCorrespondingSourceObject: {fileID: -1018664272722485354, guid: 7f2f26cc89ecae32dbcead811c3589a4, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 6244877171231337737}
   m_SourcePrefab: {fileID: 100100000, guid: 7f2f26cc89ecae32dbcead811c3589a4, type: 3}
---- !u!1 &394087198423039846 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 7f2f26cc89ecae32dbcead811c3589a4, type: 3}
-  m_PrefabInstance: {fileID: 700729660816065079}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1023377682596423132 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 7f2f26cc89ecae32dbcead811c3589a4, type: 3}
@@ -176,47 +165,6 @@ CapsuleCollider:
   m_Height: 2.036955
   m_Direction: 1
   m_Center: {x: -0.014192462, y: 0.015022036, z: 0.17}
---- !u!114 &3401326544346648448
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8675489602917309857}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 74f1de44ea71007e891a931deab957f9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  trashBag: {fileID: 394087198423039846}
---- !u!114 &6244877171231337737
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8675489602917309857}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a19267fe653ef02f6a9fce36387e0807, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  onInteract:
-    m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 3401326544346648448}
-        m_TargetAssemblyTypeName: TrashBag, Assembly-CSharp
-        m_MethodName: Empty
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
-  useMessage: Empty
 --- !u!1001 &2245387555018851298
 PrefabInstance:
   m_ObjectHideFlags: 0

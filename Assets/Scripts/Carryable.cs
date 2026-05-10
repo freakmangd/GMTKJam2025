@@ -5,6 +5,7 @@ public class Carryable : MonoBehaviour
 {
     [SerializeField] private Rigidbody rb;
     [SerializeField] private UnityEvent throwEvent;
+    public bool isHeld { get { return PlayerControllerRigidbody.Instance.heldItem == this; } }
 
     public void Pickup()
     {
